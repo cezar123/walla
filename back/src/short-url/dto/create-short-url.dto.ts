@@ -1,3 +1,3 @@
 export class CreateShortUrlDto {
-    name: string
+    url: string
 }

@@ -1,0 +1,44 @@
+version: '3.9'
+
+services:
+  front:
+    container_name: walla-front
+    # image: cezar/nextjs
+    volumes:
+      - type: bind
+        source: ./front
+        target: /app
+    build: ./front
+    ports:
+      - 3000:3000
+
+  back:
+    container_name: walla-back
+    # image: cezar/nestjs
+    volumes:
+      - type: bind
+        source: ./back
+        target: /app
+    build: ./back
+    ports:
+      - 3001:3001
+    environment:
+      MONGODB_ADMINUSERNAME: cezar
+      MONGODB_ADMINPASSWORD: JOSuIrzK4tyH2uvF
+      MONGODB_URL: mongodb://root:example@mongodb:27017/
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - type: volume
+        source: mongodata
+        target: /data/db
+    environment:
+      - MONGODB_DATABASE="test"
+      # MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - 27017:27017
+volumes:
+  mongodata:

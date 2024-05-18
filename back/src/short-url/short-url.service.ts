@@ -1,21 +1,26 @@
-import { Injectable } from '@nestjs/common';
-import {Connection, Model} from 'mongoose';
-import { InjectModel, InjectConnection } from "@nestjs/mongoose";
+import { Injectable, Inject } from '@nestjs/common';
+import { Model } from 'mongoose';
 import { CreateShortUrlDto } from './dto/create-short-url.dto';
-import { ShortUrl } from "./schemas/short-url.schema";
+import { ShortUrl } from "./interfaces/short-url.interface";
 
 
 @Injectable()
 export class ShortUrlService {
 
-  constructor(@InjectModel(ShortUrl.name) private model: Model<ShortUrl>, @InjectConnection() private connection: Connection) {}
+  constructor(
+    @Inject('SHORT_URL_MODEL') 
+    private readonly model: Model<ShortUrl> 
+    ) {}
 
   async create(createShortUrlDto: CreateShortUrlDto): Promise<ShortUrl>{
-    const createdShortUrl = new this.model(createShortUrlDto);
-    return await createdShortUrl.save();
+    return this.model.create(createShortUrlDto);
   }
 
-  findOne(id: number) {
+  async findOne(id: number): Promise<ShortUrl | null>{
     return this.model.findById(id).exec();
+  }
+
+  async findAll(): Promise<ShortUrl[]>{
+    return this.model.find().exec();
   }
 }
