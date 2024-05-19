@@ -1,7 +1,7 @@
-import { Injectable, Inject } from '@nestjs/common';
+import {Injectable, Inject, NotFoundException} from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CreateShortUrlDto } from './dto/create-short-url.dto';
-import { ShortUrl } from "./interfaces/short-url.interface";
+import { ShortUrl } from "../../../types/types";
 
 
 @Injectable()
@@ -13,14 +13,19 @@ export class ShortUrlService {
     ) {}
 
   async create(createShortUrlDto: CreateShortUrlDto): Promise<ShortUrl>{
-    return this.model.create(createShortUrlDto);
+    return await this.model.create(createShortUrlDto);
   }
 
-  async findOne(id: number): Promise<ShortUrl | null>{
-    return this.model.findById(id).exec();
-  }
-
-  async findAll(): Promise<ShortUrl[]>{
-    return this.model.find().exec();
+  async findOne(id: string): Promise<ShortUrl | null>{
+    let url;
+    try {
+      url = await this.model.findById(id);
+    } catch (error) {
+      throw new NotFoundException('No matching URL found');
+    }
+    if (!url) {
+      throw new NotFoundException('No matching URL found');
+    }
+    return url;
   }
 }

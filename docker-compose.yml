@@ -35,7 +35,7 @@ services:
         source: mongodata
         target: /data/db
     environment:
-      - MONGODB_DATABASE="test"
+      - MONGODB_DATABASE="short_url"
       # MONGO_INITDB_ROOT_USERNAME: root
       # MONGO_INITDB_ROOT_PASSWORD: example
     ports:
